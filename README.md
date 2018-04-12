@@ -28,119 +28,39 @@ Alternatively some scripts have been included to streamline this process, these 
 2. ./build.sh
 3. ./run.sh
 
-Tips for setting up your environment can be found [here](https://classroom.udacity.com/nanodegrees/nd013/parts/40f38239-66b6-46ec-ae68-03afd8a601c8/modules/0949fca6-b379-42af-a919-ee50aa304e6a/lessons/f758c44c-5e40-4e01-93b5-1a82aa4e044f/concepts/23d376c7-0195-4276-bdf0-e02f1f3c665d)
-
-Note that the programs that need to be written to accomplish the project are src/particle_filter.cpp, and particle_filter.h
-
-The program main.cpp has already been filled out, but feel free to modify it.
-
-Here is the main protcol that main.cpp uses for uWebSocketIO in communicating with the simulator.
-
-INPUT: values provided by the simulator to the c++ program
-
-// sense noisy position data from the simulator
-
-["sense_x"] 
-
-["sense_y"] 
-
-["sense_theta"] 
-
-// get the previous velocity and yaw rate to predict the particle's transitioned state
-
-["previous_velocity"]
-
-["previous_yawrate"]
-
-// receive noisy observation data from the simulator, in a respective list of x/y values
-
-["sense_observations_x"] 
-
-["sense_observations_y"] 
-
-
-OUTPUT: values provided by the c++ program to the simulator
-
-// best particle values used for calculating the error evaluation
-
-["best_particle_x"]
-
-["best_particle_y"]
-
-["best_particle_theta"] 
-
-//Optional message data used for debugging particle's sensing and associations
-
-// for respective (x,y) sensed positions ID label 
-
-["best_particle_associations"]
-
-// for respective (x,y) sensed positions
-
-["best_particle_sense_x"] <= list of sensed x positions
-
-["best_particle_sense_y"] <= list of sensed y positions
-
-
-Your job is to build out the methods in `particle_filter.cpp` until the simulator output says:
+You will see a message indicating the filter is listening:
 
 ```
-Success! Your particle filter passed!
-```
-
-# Implementing the Particle Filter
-The directory structure of this repository is as follows:
+> ./run.sh
+Listening to port 4567
 
 ```
-root
-|   build.sh
-|   clean.sh
-|   CMakeLists.txt
-|   README.md
-|   run.sh
-|
-|___data
-|   |   
-|   |   map_data.txt
-|   
-|   
-|___src
-    |   helper_functions.h
-    |   main.cpp
-    |   map.h
-    |   particle_filter.cpp
-    |   particle_filter.h
-```
 
-The only file you should modify is `particle_filter.cpp` in the `src` directory. The file contains the scaffolding of a `ParticleFilter` class and some associated methods. Read through the code, the comments, and the header file `particle_filter.h` to get a sense for what this code is expected to do.
+Download and open the self driving car nano degree term2 simulator (https://github.com/udacity/self-driving-car-sim/releases).
 
-If you are interested, take a look at `src/main.cpp` as well. This file contains the code that will actually be running your particle filter and calling the associated methods.
+Use the right arrow to go to the Kidnapped Vehicle project:
 
-## Inputs to the Particle Filter
-You can find the inputs to the particle filter in the `data` directory. 
+![Simulator Kidnapped Vehicle project](images/simulator_kidnapped_vehicle_project.png)
 
-#### The Map*
-`map_data.txt` includes the position of landmarks (in meters) on an arbitrary Cartesian coordinate system. Each row has three columns
-1. x position
-2. y position
-3. landmark id
+Clicking on "Select," the simulator for the Kidnapped project start and the Particle Filter informs it is connected:
 
-### All other data the simulator provides, such as observations and controls.
+![Simulator Kidnapped Vehicle project first screen](images/simulator_kidnapped_vehicle_first_screen.png)
 
-> * Map data provided by 3D Mapping Solutions GmbH.
+Clicking on "Start" button, the vehicle starts moving, and the blue circle(the filter calculated position) moves with it. After a while, the simulator informs you if your Particle Filter passed or failed. Here is an example of the filter passing the test:
 
-## Success Criteria
-If your particle filter passes the current grading code in the simulator (you can make sure you have the current version at any time by doing a `git pull`), then you should pass! 
+![Simulator Kidnapped Vehicle Passed](images/passed.png)
 
-The things the grading code is looking for are:
+# Code description
 
+The Particle Filter is implemented in [src/particle_filter.cpp](./src/particle_filter.cpp):
 
-1. **Accuracy**: your particle filter should localize vehicle position and yaw to within the values specified in the parameters `max_translation_error` and `max_yaw_error` in `src/main.cpp`.
+- Initialization: Particle initialization is implemented at [ParticleFilter::init](./src/particle_filter.cpp#L24) from line 24 to line 62.
 
-2. **Performance**: your particle filter should complete execution within the time of 100 seconds.
+- Prediction: The prediction step is implemented at [ParticleFilter::prediction](./src/particle_filter.cpp#L64) from line 64 to line 100.
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+- Weight's update: This is the more important operation in my opinion. It is implemented at [ParticleFilter::updateWeights](./src/particle_filter.cpp#L64) from line 138 to line 217.
+
+Almost the rest of the magic happens on [src/main.cpp](./src/main.cpp). The event handler declared at [line 49](./src/main.cpp#L49) parse the received message and call the above described Particle Filter methods.
 
 
 
